@@ -20,3 +20,5 @@ Imports:
     proxy,
     stringr,
     text
+URL: https://github.com/RemiMahmoud/TrustMe
+BugReports: https://github.com/RemiMahmoud/TrustMe/issues
