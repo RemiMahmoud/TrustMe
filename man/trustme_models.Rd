@@ -29,7 +29,7 @@ Evaluate uncertainty of LLM responses (one model and multiple repetitions, or mu
 \dontrun{
 # Processing time is often longer than ten seconds
 # because the function uses multiple times a large language model.
-
+library(NaileR)
 data(beard_cont)
 intro_beard <- 'A survey was conducted about beards
 and 8 types of beards were described.

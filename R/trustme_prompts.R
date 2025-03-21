@@ -18,7 +18,7 @@
 # prompts comparison
 ##########################
 #'
-#'
+#'library(NaileR)
 #'data(waste)
 #'waste <- waste[-14]    # no variability on this question
 #'

@@ -18,7 +18,7 @@
 #' \dontrun{
 #' # Processing time is often longer than ten seconds
 #' # because the function uses multiple times a large language model.
-#'
+#' library(NaileR)
 #' data(beard_cont)
 #' intro_beard <- 'A survey was conducted about beards
 #' and 8 types of beards were described.
@@ -65,7 +65,7 @@ trustme_models <- function(prompt, models = NULL, num_repeats = 1) {
     }
   }
 
-  res_embeddings <- text::generate_embeddings(results)
+  res_embeddings <- generate_embeddings(results)
   distance_matrix <- proxy::dist(as.data.frame(res_embeddings), method = "cosine")
   distance_matrix <- as.matrix(distance_matrix)
   medoid_index <- cluster::pam(distance_matrix, k = 1)$medoids

@@ -12,7 +12,7 @@ the [NaileR](https://cran.r-project.org/web/packages/NaileR/index.html) ecosyste
 You can install the development version of TrustMe like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+devtools::install_github("RemiMahmoud/TrustMe")
 ```
 
 ## Example
@@ -54,7 +54,7 @@ res_trustme$pca_plot
 ##########################
 # repetitions comparison
 ##########################
-res_trustme <- trustme_models(res_beard, models = "llama2", num_repeats = 5)
+res_trustme <- trustme_models(res_beard, models = "llama3.1", num_repeats = 5)
 cat(res_trustme$central_answer[[1]])
 
 ```

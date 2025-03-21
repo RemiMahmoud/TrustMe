@@ -27,7 +27,7 @@ Evaluate data consistency by generating multiple LLM responses for one dataset
 
 
 
-
+library(NaileR)
 data(waste)
 waste <- waste[-14]    # no variability on this question
 

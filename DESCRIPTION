@@ -13,10 +13,8 @@ RoxygenNote: 7.3.2
 Imports: 
     cluster,
     FactoMineR,
-    NaileR,
     ollamar,
     proxy,
-    stringr,
     text
 URL: https://github.com/RemiMahmoud/TrustMe
 BugReports: https://github.com/RemiMahmoud/TrustMe/issues

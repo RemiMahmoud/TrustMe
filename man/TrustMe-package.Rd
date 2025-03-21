@@ -8,6 +8,14 @@
 \description{
 An R package designed to enhance confidence in LLM-generated responses, particularly within the NaileR ecosystem. TrustMe offers different strategies to evaluate the reliability of LLM-generated responses (cross-model, internal-model and data-model consistency).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/RemiMahmoud/TrustMe}
+  \item Report bugs at \url{https://github.com/RemiMahmoud/TrustMe/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Sébastien Lê \email{sebastien.le@institut-agro.fr} (\href{https://orcid.org/0000-0001-8814-6714}{ORCID})
 
