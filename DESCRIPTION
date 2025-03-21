@@ -3,10 +3,8 @@ Title: TrustMe: Turning to R for Understanding Semantic Topology from Model’s 
 Version: 0.0.0.9000
 Authors@R: 
     c(
-    person('Sébastien', 'Lê', role = c('aut', 'cre'), email = 'sebastien.le@institut-agro.fr',
-    person("Rémi", "Mahmoud", role = c('aut'), comment =c(ORCID = '0000-0003-0853-0834')),
-    comment = c(ORCID = "0000-0001-8814-6714"))
-    )
+    person('Sébastien', 'Lê', role = c('aut', 'cre'), email = 'sebastien.le@institut-agro.fr',comment = c(ORCID = "0000-0001-8814-6714")),
+    person('Rémi', 'Mahmoud', role = c('aut'), comment =c(ORCID = '0000-0003-0853-0834')))
 Description: An R package designed to enhance confidence in LLM-generated responses, particularly within the NaileR ecosystem. TrustMe offers different strategies to evaluate the reliability of LLM-generated responses (cross-model, internal-model and data-model consistency).
 License: GPL (>= 2)
 Encoding: UTF-8
