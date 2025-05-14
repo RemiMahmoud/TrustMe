@@ -1,7 +1,6 @@
 
 
 
-# TrustMe
 
 <br />
 <div align="center">
@@ -94,8 +93,11 @@ cat(res_trustme$central_answer[[1]])
 # uncertainty computation
 ###########################
 
+res_uncertainty <- compute_uncertainty(unlist(res_trustme$responses))
 
+# Plot uncertainty
 
+cowplot::plot_grid(plotlist = plot_uncertainty(uncertainty))
 
 ```
 
