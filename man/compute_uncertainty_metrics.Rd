@@ -26,6 +26,12 @@ a list containing
 \description{
 Measure uncertainty of LLM responses
 }
+\details{
+This function computes metrics based on the article of Lin et al., 2024. It embeds responses using the
+\href{https://huggingface.co/sentence-transformers/all-mpnet-base-v2}{all-mpnet-base-v2} model, and then compute cosine similarities between them.
+Several metrics are derived from the adjacency matrix built from the cosine similarities. Some are designed to quantify the global uncertainty (UeigV, Udeg, Uecc)
+and other are designed to quantify and compare the uncertainty of each node (Cdeg, Cecc).
+}
 \examples{
 \dontrun{
 # Processing time is often longer than ten seconds
@@ -50,4 +56,7 @@ uncertainty <- compute_uncertainty_metrics(unlist(res_trustme$responses))
 
 }
 
+}
+\references{
+Lin, Z., Trivedi, S., & Sun, J. (2024). Generating with confidence: Uncertainty quantification for black-box large language models
 }

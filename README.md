@@ -1,7 +1,3 @@
-
-
-
-
 <br />
 <div align="center">
   <a href="https://github.com/RemiMahmoud/TrustMe">
@@ -54,7 +50,7 @@ This is a basic example which shows you how to solve a common problem:
 library(TrustMe)
 library(NaileR)
 
-data(beard_cont)
+data(beard_cont, package = "NaileR")
 intro_beard <- 'A survey was conducted about beards
 and 8 types of beards were described.
 In the data that follow, beards are named B1 to B8.'
@@ -77,27 +73,29 @@ res_beard
 # models comparison
 #######################
 
-res_trustme <- trustme_models(res_beard, models = c("llama2", "llama3", "llama3.1","mistral"))
-names(res_trustme)
-cat(res_trustme$central_answer[[1]])
-res_trustme$pca_plot
+res_trustme_cross_model_consistency <- trustme_models(res_beard, models = c("llama2", "llama3", "llama3.1","mistral"))
+names(res_trustme_cross_model_consistency)
+cat(res_trustme_cross_model_consistency$central_answer[[1]])
+res_trustme_cross_model_consistency$pca_plot
 
 ##########################
 # repetitions comparison
 ##########################
-res_trustme <- trustme_models(res_beard, models = "llama3.1", num_repeats = 5)
-cat(res_trustme$central_answer[[1]])
+res_trustme_internal_model_consistency <- trustme_models(res_beard, models = "llama3.1", num_repeats = 5)
+cat(res_trustme_internal_model_consistency$central_answer[[1]])
+res_trustme_internal_model_consistency$pca_plot
 
 
 ###########################
 # uncertainty computation
 ###########################
 
-res_uncertainty <- compute_uncertainty(unlist(res_trustme$responses))
+res_uncertainty <- compute_uncertainty_metrics(unlist(res_trustme_internal_model_consistency$responses))
 
 # Plot uncertainty
-
-cowplot::plot_grid(plotlist = plot_uncertainty(uncertainty))
+library(ggplot2)
+theme_set(theme_bw())
+cowplot::plot_grid(plotlist = plot_uncertainty(res_uncertainty))
 
 ```
 

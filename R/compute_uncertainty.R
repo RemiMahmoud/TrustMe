@@ -39,7 +39,16 @@ cosine_similarity <- function(sentence1, sentence2){
 #' * Cdeg: for each node, the confidence score
 #' * Uecc: average eccentricity
 #' * Cecc: eccentricity for each node (useful for comparison between nodes)
+
+
+#' @details
+#' This function computes metrics based on the article of Lin et al., 2024. It embeds responses using the
+#' [all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) model, and then compute cosine similarities between them.
+#' Several metrics are derived from the adjacency matrix built from the cosine similarities. Some are designed to quantify the global uncertainty (UeigV, Udeg, Uecc)
+#' and other are designed to quantify and compare the uncertainty of each node (Cdeg, Cecc).
 #'
+#' @references
+#'  Lin, Z., Trivedi, S., & Sun, J. (2024). Generating with confidence: Uncertainty quantification for black-box large language models
 #'
 #' @export
 #'
@@ -194,11 +203,11 @@ plot_uncertainty <- function(res_uncertainty){
 
   plot_graph = ggraph::ggraph(graph_tbl, layout = "circle") +
     # plot_graph = ggraph(graph_tbl, layout = "linear") +
-    ggraph::geom_edge_link(aes(label = round(weight, 2)),
-                   angle_calc = "along", label_dodge = unit(2.5, 'mm'),
+    ggraph::geom_edge_link(ggplot2::aes(label = round(weight, 2)),
+                   angle_calc = "along", label_dodge = ggplot2::unit(2.5, 'mm'),
                    label_size = 3, edge_colour = "gray50") +
     ggraph::geom_node_point(size = 5, color = "steelblue") +
-    ggraph::geom_node_text(aes(label = name), vjust = -1) +
+    ggraph::geom_node_text(ggplot2::aes(label = name), vjust = -1) +
     ggplot2::theme_void()+
     ggplot2::labs(title = "Connections between responses")
 
@@ -208,14 +217,14 @@ plot_uncertainty <- function(res_uncertainty){
   plot_eccentricity = tibble::tibble(response = name_responses,
                              eccentricity = c(res_uncertainty$Cecc)) %>%
     dplyr::mutate(response = forcats::fct_reorder(response, eccentricity )) %>%
-    ggplot2::ggplot(aes(x = response, y = eccentricity)) +
+    ggplot2::ggplot(ggplot2::aes(x = response, y = eccentricity)) +
     ggplot2::geom_col(position = "dodge", fill = "sienna", alpha =.4)+
     ggplot2::labs(title = "Eccentricity coefficient of each response")
 
   plot_degree = tibble::tibble(response = name_responses,
                        degree = c(res_uncertainty$Cdeg)) %>%
     dplyr::mutate(response = forcats::fct_reorder(response, degree )) %>%
-    ggplot2::ggplot(aes(x = response, y = degree)) +
+    ggplot2::ggplot(ggplot2::aes(x = response, y = degree)) +
     ggplot2::geom_col(position = "dodge", fill = "forestgreen", alpha =.4) +
     ggplot2::labs(title = "Degree of each response")
 
@@ -223,7 +232,7 @@ plot_uncertainty <- function(res_uncertainty){
   plot_uni_metrics = tibble::tibble(metric = c("UeigV","Udeg", "Uecc"),
                             value = c(res_uncertainty$UeigV, res_uncertainty$Udeg, res_uncertainty$Uecc))%>%
     dplyr::mutate(metric = forcats::fct_reorder(metric, value, .desc = TRUE)) %>%
-    ggplot2::ggplot(aes(x = metric, y = value, fill = metric )) +
+    ggplot2::ggplot(ggplot2::aes(x = metric, y = value, fill = metric )) +
     ggplot2::geom_col(position = "dodge", alpha = .4) +
     ggplot2::scale_fill_manual(values = c("Udeg" = "forestgreen", "Uecc" = "sienna", "UeigV" = "steelblue3")) +
     ggplot2::labs(title ="Univariate metrics") +

@@ -30,6 +30,7 @@ Imports:
     text,
     tibble,
     tidygraph,
+    utils
 Suggests: 
     NaileR,
     stringr
