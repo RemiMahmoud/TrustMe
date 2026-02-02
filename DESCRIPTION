@@ -23,6 +23,7 @@ Imports:
     ggplot2,
     ggraph,
     igraph,
+    magrittr,
     MASS,
     ollamar,
     proxy,

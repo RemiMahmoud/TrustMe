@@ -109,10 +109,14 @@ compute_uncertainty_metrics <- function(vec_text, embedding_model = "intfloat/e5
   # cosine sim = scalar prod
   similarity_matrix <- embeddings %*% t(embeddings)
   
-  colnames(similarity_matrix) = rownames(similarity_matrix) = names(vec_text)
-  
   
   m = length(vec_text)
+  
+  if(is.null(names(vec_text))) {names(vec_text) = paste0("text", 1:m)}
+  
+  
+  colnames(similarity_matrix) = rownames(similarity_matrix) = names(vec_text)
+  
   
   # eq 5-6-7 paper Lin2024
   #adj matrix
