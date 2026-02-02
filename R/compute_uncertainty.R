@@ -101,7 +101,8 @@ compute_uncertainty_metrics <- function(vec_text, embedding_model = "intfloat/e5
   
   
   
-  
+  # model specs, see https://huggingface.co/intfloat/multilingual-e5-large
+  if(embedding_model == "intfloat/e5-large-v2"){vec_text = paste0("query: ", vec_text)}
   
   embeddings <- model_sentence_transformer$encode(vec_text)
   embeddings <- embeddings / sqrt(rowSums(embeddings^2))
