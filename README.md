@@ -39,6 +39,9 @@ You can install the development version of TrustMe like so:
 devtools::install_github("RemiMahmoud/TrustMe")
 ```
 
+TrustMe **needs** you to have Python 3.10 installed on your computer.
+
+
 ## Example
 
 

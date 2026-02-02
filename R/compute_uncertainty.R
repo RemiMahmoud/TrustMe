@@ -1,26 +1,21 @@
 
 
-#' Compute the cosine similarity between two sentences
-#' @param sentence1 the first sentence
-#' @param sentence2 the second sentence
-#'
-#'
-cosine_similarity <- function(sentence1, sentence2){
-
-
-
-  # Otherwise, load and cache it
-  sentence_transformers <- reticulate::import("sentence_transformers")
-  model_sentence_transformer <- sentence_transformers$SentenceTransformer("all-mpnet-base-v2")
-
-
-  embedding1 <- model_sentence_transformer$encode(sentence1)
-  embedding2 <- model_sentence_transformer$encode(sentence2)
-
-  output = sum(embedding1*embedding2)/(sqrt(sum(embedding1^2))*sqrt(sum(embedding2^2)))
-
-  return(output)
-}
+# cosine_similarity <- function(sentence1, sentence2){
+# 
+# 
+# 
+#   # Otherwise, load and cache it
+#   sentence_transformers <- reticulate::import("sentence_transformers")
+#   model_sentence_transformer <- sentence_transformers$SentenceTransformer("all-mpnet-base-v2")
+# 
+# 
+#   embedding1 <- model_sentence_transformer$encode(sentence1)
+#   embedding2 <- model_sentence_transformer$encode(sentence2)
+# 
+#   output = sum(embedding1*embedding2)/(sqrt(sum(embedding1^2))*sqrt(sum(embedding2^2)))
+# 
+#   return(output)
+# }
 
 
 
@@ -28,6 +23,8 @@ cosine_similarity <- function(sentence1, sentence2){
 #' Measure uncertainty of LLM responses
 #'
 #' @param vec_text A vector of text for which the global uncertainty has to be measured
+#' @param embedding_model A character string giving the Hugging Face identifier of the sentence-embedding model to use (e.g. "intfloat/e5-large-v2"). The model is loaded via SentenceTransformers and downloaded automatically if not already cached locally.
+#'
 #'
 #' @returns a list containing
 #' * laplacian_normalized: the normalized Laplacian of the similarity matrix
@@ -43,7 +40,7 @@ cosine_similarity <- function(sentence1, sentence2){
 
 #' @details
 #' This function computes metrics based on the article of Lin et al., 2024. It embeds responses using the
-#' [all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) model, and then compute cosine similarities between them.
+#' [intfloat/e5-large-v2](https://huggingface.co/intfloat/multilingual-e5-large) model (by default, but can be modified), and then compute cosine similarities between them.
 #' Several metrics are derived from the adjacency matrix built from the cosine similarities. Some are designed to quantify the global uncertainty (UeigV, Udeg, Uecc)
 #' and other are designed to quantify and compare the uncertainty of each node (Cdeg, Cecc).
 #'
@@ -77,67 +74,81 @@ cosine_similarity <- function(sentence1, sentence2){
 #'
 #'}
 #'
+#'
+#'
 
-compute_uncertainty_metrics <- function(vec_text){
-  # , state = "entailment"
+compute_uncertainty_metrics <- function(vec_text, embedding_model = "intfloat/e5-large-v2"){
 
+  
+  
+  if (!reticulate::py_module_available("sentence_transformers")) {
+    stop("Le module Python 'sentence-transformers' is not installed. 
+       Please install it using reticulate::py_install().")
+  }
+  
+  
+  if (!reticulate::py_module_available("transformers")) {
+    stop("Le module Python 'transformers' is not installed. 
+       Please install it using reticulate::py_install().")
+  }
+  
+  
+  
+    
   transformers <- reticulate::import("transformers", convert = FALSE)
   sentence_transformers <- reticulate::import("sentence_transformers")
-  model_sentence_transformer <- sentence_transformers$SentenceTransformer("all-mpnet-base-v2")
-
-  # if(!(state %in% c("entailment", "contradiction"))) { stop("Please provide entailment or contradiction as state on which you want to compute similarities")}
-
-  m = length(vec_text)
-
-
-
-
-  similarity_matrix <- matrix(NA_real_, nrow = m, ncol = m)
+  model_sentence_transformer <- sentence_transformers$SentenceTransformer(embedding_model)
+  
+  
+  
+  
+  
+  embeddings <- model_sentence_transformer$encode(vec_text)
+  embeddings <- embeddings / sqrt(rowSums(embeddings^2))
+  
+  # cosine sim = scalar prod
+  similarity_matrix <- embeddings %*% t(embeddings)
+  
   colnames(similarity_matrix) = rownames(similarity_matrix) = names(vec_text)
-
-
-  for(i in seq_len(m)){
-    for(j in seq_len(m)){
-      similarity_matrix[i, j] <- cosine_similarity(vec_text[i], vec_text[j])
-    }
-  }
-
-  # if(state == "contradiction"){similarity_matrix = 1 - similarity_matrix}
-
+  
+  
+  m = length(vec_text)
+  
   # eq 5-6-7 paper Lin2024
   #adj matrix
+  # useless if similarity matrix stays such
   W = (similarity_matrix + t(similarity_matrix)) / 2
-
+  
   #degree_matrix
   D = diag(apply(W, 1, function(x) sum(x) ))
-
-
+  
+  
   #equation 8
   my_trace= function(mat_X) sum(diag(mat_X))
-
-  Udeg = my_trace(length(vec_text)*diag(length(vec_text)) - D)/m^2
+  
+  Udeg = my_trace(m*diag(m) - D)/m^2
   Cdeg = diag(D)/m
-
+  
   # equation 5
   laplacian_normalized = diag(ncol(W)) - MASS::ginv(sqrt(D)) %*% W  %*% MASS::ginv(sqrt(D))
-
+  
   eigen_values = sort(eigen(laplacian_normalized)$
                         values)
-
-
-
+  
+  
+  
   # Compute eccentricity value (and calibrate)
   # equation 9
-
+  
   eigen_vectors = eigen(laplacian_normalized)$vectors
-
+  
   #center eigen vec
   offset = sweep(eigen_vectors, 2, rowMeans(eigen_vectors))
-
+  
   Cecc = apply(offset, 2, function(x) -sqrt(sum(x^2)))
-
+  
   Uecc = sqrt(sum(offset^2))
-
+  
   return(
     list(laplacian_normalized = laplacian_normalized,
          similarity_matrix = similarity_matrix,
@@ -148,10 +159,11 @@ compute_uncertainty_metrics <- function(vec_text){
          Uecc = Uecc,
          Cecc  = Cecc,
          W = W))
-
-
-
+  
+  
+  
 }
+
 
 
 #' Plot uncertainty of LLM responses

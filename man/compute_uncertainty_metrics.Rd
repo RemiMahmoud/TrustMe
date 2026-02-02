@@ -4,10 +4,12 @@
 \alias{compute_uncertainty_metrics}
 \title{Measure uncertainty of LLM responses}
 \usage{
-compute_uncertainty_metrics(vec_text)
+compute_uncertainty_metrics(vec_text, embedding_model = "intfloat/e5-large-v2")
 }
 \arguments{
 \item{vec_text}{A vector of text for which the global uncertainty has to be measured}
+
+\item{embedding_model}{A character string giving the Hugging Face identifier of the sentence-embedding model to use (e.g. "intfloat/e5-large-v2"). The model is loaded via SentenceTransformers and downloaded automatically if not already cached locally.}
 }
 \value{
 a list containing
@@ -28,7 +30,7 @@ Measure uncertainty of LLM responses
 }
 \details{
 This function computes metrics based on the article of Lin et al., 2024. It embeds responses using the
-\href{https://huggingface.co/sentence-transformers/all-mpnet-base-v2}{all-mpnet-base-v2} model, and then compute cosine similarities between them.
+\href{https://huggingface.co/intfloat/multilingual-e5-large}{intfloat/e5-large-v2} model (by default, but can be modified), and then compute cosine similarities between them.
 Several metrics are derived from the adjacency matrix built from the cosine similarities. Some are designed to quantify the global uncertainty (UeigV, Udeg, Uecc)
 and other are designed to quantify and compare the uncertainty of each node (Cdeg, Cecc).
 }
@@ -55,6 +57,8 @@ uncertainty <- compute_uncertainty_metrics(unlist(res_trustme$responses))
 
 
 }
+
+
 
 }
 \references{
